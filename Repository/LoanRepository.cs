@@ -1,4 +1,5 @@
 ﻿
+using LoanManagement.Exception;
 using LoanManagement.Model;
 using LoanManagement.Util;
 using System;
@@ -86,16 +87,127 @@ namespace LoanManagement.Repository
 
         public string LoanStatus(int loanId)
         {
+           
+
+            try
+            {
+                cmd.Parameters.Clear();
+                cmd.Connection = sqlConnection;
+                sqlConnection.Open();
+                string status = "";
+                cmd.CommandText = "Select COUNT(*) from loan where loanId = @LoanId";
+                cmd.Parameters.AddWithValue("@LoanId", loanId);
+                int isExist = (int)cmd.ExecuteScalar();
+
+                if (isExist == 0)
+                {
+                    throw new InvalidLoanException("Loan Id is not found!");
+                }
+
+                cmd.CommandText = "Select CreditScore from Customer c join loan l on c.customerId = l.customerId where loanId = @LoanId";
+                cmd.Parameters.AddWithValue("@LoanId", loanId);
+                SqlDataReader reader = cmd.ExecuteReader();
+                decimal creditScore = 0;
+                
+               
+                creditScore = Convert.ToDecimal(reader["CreditScore"]);
+                
+                 if (creditScore > 650)
+                    {
+                       status ="Approved";
+                        cmd.CommandText = "UPDATE Loan SET LoanStatus = 'Approved' WHERE loanId = @LoanId";
+                       cmd.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        status= "Rejected";
+                        cmd.CommandText = "UPDATE Loans SET LoanStatus = 'Rejected' WHERE loanId = @LoanId";
+                        cmd.ExecuteNonQuery();
+                }
+
+                return status;
+            }
+            catch(InvalidLoanException ilex) 
+            {
+                Console.WriteLine(ilex.Message);
+            }
+          
+            sqlConnection.Close();
             return "pending";
         }
 
-        public decimal CalculateEMI(int loanId)
+        public double CalculateEMI(int loanId)
         {
-            return 5.55m;
+            cmd.Parameters.Clear();
+            cmd.Connection = sqlConnection;
+            sqlConnection.Open();
+            cmd.CommandText = "select InterestRate,PrincipalAmount,LoanTerm from loan where loanId = @loanId";
+
+            cmd.Parameters.AddWithValue("@loanId", loanId);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                double Rate = (Convert.ToDouble(reader["InterestRate"])/12/100);
+                double Principal = Convert.ToDouble(reader["PrincipalAmount"]);
+                int term = (int)reader["LoanTerm"];
+
+                double interest = Principal * Rate * Math.Pow((1 + Rate),term)/(Math.Pow((double)(1 + Rate), term) - 1);
+
+                return interest;
+            }
+
+            sqlConnection.Close();
+            return 0.00;
         }
 
         public bool LoanRepayment(int loanId, decimal amount)
         {
+            try
+            {
+                cmd.Parameters.Clear();
+                cmd.Connection = sqlConnection;
+                sqlConnection.Open();
+                string status = "";
+                cmd.CommandText = "Select COUNT(*) from loan where loanId = @LoanId";
+                cmd.Parameters.AddWithValue("@LoanId", loanId);
+                int isExist = (int)cmd.ExecuteScalar();
+
+                if (isExist == 0)
+                {
+                    throw new InvalidLoanException("Loan Id is not found!");
+                }
+
+                double emi =CalculateEMI(loanId);
+                if (Convert.ToDouble(amount) < emi)
+                {
+                    Console.WriteLine("Payment rejected. Amount less than the EMI amount.");
+                    return false;
+                }
+                int noOfEmis = (int)(Convert.ToDouble(amount) / emi);
+                double totalPaid = noOfEmis * emi;
+
+                cmd.CommandText = "UPDATE Loans SET PrincipalAmount = PrincipalAmount - @TotalPaid WHERE LoanId = @LoanId";
+                cmd.Parameters.AddWithValue("@TotalPaid", totalPaid);
+                cmd.ExecuteNonQuery();
+
+                amount= Convert.ToDecimal(Convert.ToDouble(amount) - totalPaid);
+
+                if (amount <= 0)
+                {
+                    Console.WriteLine("Loan fully paid.");
+                }
+                else
+                {
+                    Console.WriteLine($"EMIs paid: {noOfEmis}. Remaining Principal: {amount}");
+                }
+
+            }
+            catch (InvalidLoanException ilex)
+            {
+                Console.WriteLine(ilex.Message);
+            }
+
             return true;
         }
 
@@ -124,12 +236,12 @@ namespace LoanManagement.Repository
             return loans;
         }
 
-        public List<Loan> GetAllLoanById(int loanId)
+        public List<Loan> GetAllLoanById(int customerId)
         {
             List<Loan> loans = new List<Loan>();
             cmd.Connection = sqlConnection;
-            cmd.CommandText = "SELECT * FROM Loan where loanId=@loanId";
-            cmd.Parameters.AddWithValue("@loanId", loanId);
+            cmd.CommandText = "SELECT * FROM Loan where customerId=@customerId";
+            cmd.Parameters.AddWithValue("@customerId", customerId);
             sqlConnection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

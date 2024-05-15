@@ -27,7 +27,7 @@ namespace LoanManagement
                 Console.WriteLine("6.Loan Repayment");
                 Console.WriteLine("7.Get all loans");
                 Console.WriteLine("8.Get all loans by specific customer id");
-                Console.Write("9.EXIT");
+                Console.WriteLine("9.EXIT");
                 Console.Write("Select an Option: ");
                 int userOption = int.Parse(Console.ReadLine());
                 switch (userOption)

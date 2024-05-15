@@ -125,8 +125,8 @@ namespace LoanManagement.Service
         {
             Console.Write("Enter the loan id:");
             int loanId = int.Parse(Console.ReadLine());
-            decimal calculatedEMI = loanRepo.CalculateEMI(loanId);
-            Console.WriteLine($"Calculated interest is{calculatedEMI}");
+            double calculatedEMI = loanRepo.CalculateEMI(loanId);
+            Console.WriteLine($"Calculated EMI is :{calculatedEMI}");
         }
 
        public void LoanRepayment()
@@ -140,7 +140,7 @@ namespace LoanManagement.Service
 
        public void GetAllLoan()
         {
-            List<Loan> loans = new List<Loan>();
+            List<Loan > loans = new List<Loan>();
 
             loans = loanRepo.GetAllLoan();
             foreach (var loan in loans)
@@ -152,12 +152,12 @@ namespace LoanManagement.Service
       public  void GetAllLoanById()
         {
             List<Loan> loans = new List<Loan>();
-            Console.Write("Enter the loan id:");
-            int loanId = int.Parse(Console.ReadLine());
-            loans = loanRepo.GetAllLoanById(loanId);
+            Console.Write("Enter the customer id:");
+            int customerId = int.Parse(Console.ReadLine());
+            loans = loanRepo.GetAllLoanById(customerId);
             foreach (var loan in loans)
             {
-                Console.Write($"Loan Id: {loan.LoanId},\n Customer id:{loan.CustomerId},\n Loan type:{loan.LoanType},\n Principle Amount: {loan.PrincipalAmount},\n Loan Status :{loan.LoanStatus}\n______________\n");
+                Console.Write($"Loan Id: {loan.LoanId},\n Customer id:{customerId},\n Loan type:{loan.LoanType},\n Principle Amount: {loan.PrincipalAmount},\n Loan Status :{loan.LoanStatus}\n______________\n");
             }
         }
     }

@@ -17,7 +17,7 @@ namespace LoanManagement.Repository
 
         string LoanStatus(int loanId);
 
-       decimal CalculateEMI (int loanId);
+       double CalculateEMI (int loanId);
 
         bool LoanRepayment(int loanId, decimal amount);
 
