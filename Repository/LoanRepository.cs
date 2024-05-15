@@ -63,7 +63,7 @@ namespace LoanManagement.Repository
             cmd.Parameters.Clear();
             cmd.Connection = sqlConnection;
             sqlConnection.Open();
-            cmd.CommandText = "select InterestRate,PrincipalAmount,LoanTerm from cart where loanId = @loanId";
+            cmd.CommandText = "select InterestRate,PrincipalAmount,LoanTerm from loan where loanId = @loanId";
 
             cmd.Parameters.AddWithValue("@loanId", loanid);
             SqlDataReader reader = cmd.ExecuteReader();
