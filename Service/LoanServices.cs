@@ -50,11 +50,11 @@ namespace LoanManagement.Service
             loan.CustomerId = int.Parse(Console.ReadLine());
             Console.Write("Enter the principal amount:");
             loan.PrincipalAmount = Convert.ToDecimal(Console.ReadLine());
-            Console.Write("Enter the interest rate");
+            Console.Write("Enter the interest rate: ");
             loan.InterestRate = Convert.ToDecimal(Console.ReadLine());
-            Console.Write("Enter the loan term in months");
+            Console.Write("Enter the loan term in months: ");
             loan.LoanTerm = int.Parse(Console.ReadLine());
-            Console.Write("Enter the loan type:(CarLoan/HomeLoan)");
+            Console.Write("Enter the loan type:(CarLoan/HomeLoan): ");
             loan.LoanType = Console.ReadLine().ToLower();
             string PropertyAddress="";
             int propertyValue=0;
