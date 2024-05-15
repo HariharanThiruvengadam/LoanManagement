@@ -55,6 +55,7 @@ namespace LoanManagement.Repository
             cmd.Parameters.AddWithValue("@carModel", carModel);
             cmd.Parameters.AddWithValue("@carValue", carValue);
             int status = cmd.ExecuteNonQuery();
+            sqlConnection.Close();
             return status>0?true:false;
         }
 
