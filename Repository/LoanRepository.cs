@@ -240,8 +240,8 @@ namespace LoanManagement.Repository
         {
             List<Loan> loans = new List<Loan>();
             cmd.Connection = sqlConnection;
-            cmd.CommandText = "SELECT * FROM Loan where customerId=@customerId";
-            cmd.Parameters.AddWithValue("@customerId", customerId);
+            cmd.CommandText = "SELECT * FROM Loan where customerId=@customerid";
+            cmd.Parameters.AddWithValue("@customeroid", customerId);
             sqlConnection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
