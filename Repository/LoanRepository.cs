@@ -63,16 +63,16 @@ namespace LoanManagement.Repository
             cmd.Parameters.Clear();
             cmd.Connection = sqlConnection;
             sqlConnection.Open();
-            cmd.CommandText = "select InterestRate,PrincipalAmount,LoanTerm from cart where loanId = @loanId";
+            cmd.CommandText = "select InterestRate,PrincipalAmount,LoanTerm from loan where loanId = @loanId";
 
             cmd.Parameters.AddWithValue("@loanId", loanid);
             SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                decimal Rate = (int)reader["InterestRate"];
-                decimal Principal = (int)reader["PrincipalAmount"];
-                int term = (int)reader["LoanTeam"];
+                decimal Rate = (decimal)reader["InterestRate"];
+                decimal Principal = (decimal)reader["PrincipalAmount"];
+                int term = (int)reader["LoanTerm"];
 
                 decimal interest = (Rate * Principal * term)/12;
 
@@ -102,7 +102,7 @@ namespace LoanManagement.Repository
         {
             List<Loan> loans = new List<Loan>();
             cmd.Connection = sqlConnection;
-            cmd.CommandText = "SELECT * FROM Loans";
+            cmd.CommandText = "SELECT * FROM Loan";
             sqlConnection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -127,7 +127,7 @@ namespace LoanManagement.Repository
         {
             List<Loan> loans = new List<Loan>();
             cmd.Connection = sqlConnection;
-            cmd.CommandText = "SELECT * FROM Loans where loanId=@loanId";
+            cmd.CommandText = "SELECT * FROM Loan where loanId=@loanId";
             cmd.Parameters.AddWithValue("@loanId", loanId);
             sqlConnection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
